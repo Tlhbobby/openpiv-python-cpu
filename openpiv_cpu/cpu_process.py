@@ -1305,7 +1305,7 @@ class CorrelationCPU:
         jr_peak1 = np.where(jr_peak1 > self.fft_wd, self.fft_wd, jr_peak1)
         
         for k in self.k_wins:
-            corr[k, id_peak1[k]:iu_peak1[k], jl_peak1[k]:jr_peak1[k]] = np.NINF
+            corr[k, id_peak1[k]:iu_peak1[k], jl_peak1[k]:jr_peak1[k]] = -np.inf
         
         # Get the second peak locations of the cross-correlation map.
         i_peak2, j_peak2 = self.get_first_peak(corr)
