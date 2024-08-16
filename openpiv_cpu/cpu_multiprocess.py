@@ -1,7 +1,7 @@
 """This module contains multiprocessing algorithms for a CPU."""
 
 import inspect
-from multiprocessing import Pool
+from mpire import WorkerPool
 
 class mp_cpu:
     """Multiprocessing class for PIV processing algorithms.
@@ -27,7 +27,7 @@ class mp_cpu:
         assert isinstance(self.n_cpus, int) and \
             self.n_cpus > 0, "{} must be a positive int.".format("n_cpus")
     
-    def run(self, pairs, indices):
+    def run(self, pairs, indices, progress_bar = True):
         """Computes velocity fields from lists of image pairs and indices.
         
         Parameters
@@ -55,12 +55,9 @@ class mp_cpu:
                     "{} must be a list of positive {} values.".format("indices", "int")
         
         if self.n_cpus > 1:
-            pool = Pool(processes=self.n_cpus)
-            res = pool.starmap(self.func, zip(pairs, indices))
-            
-            # Close the pool after use.
-            pool.close()
-            pool.join()
+            with WorkerPool(n_jobs=self.n_cpus) as pool:
+                res = pool.map_unordered(self.func, zip(pairs, indices), progress_bar=progress_bar)
+
         else:
             res = []
             for pair, index in zip(pairs, indices):
